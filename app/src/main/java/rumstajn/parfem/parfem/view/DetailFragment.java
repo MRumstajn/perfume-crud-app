@@ -1,4 +1,4 @@
-package rumstajn.parfem.parfem;
+package rumstajn.parfem.parfem.view;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.mauricio.parfem.R;
 import com.mauricio.parfem.databinding.FragmentSecondBinding;
 
-public class SecondFragment extends Fragment {
+public class DetailFragment extends Fragment {
 
     @Override
     public View onCreateView(

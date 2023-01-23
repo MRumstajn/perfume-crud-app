@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Parfem"
         tools:targetApi="31">
         <activity
-            android:name="rumstajn.parfem.parfem.MainActivity"
+            android:name="rumstajn.parfem.parfem.view.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Parfem.NoActionBar">
