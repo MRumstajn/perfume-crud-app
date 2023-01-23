@@ -3,6 +3,8 @@ package rumstajn.parfem.parfem.view;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mauricio.parfem.R;
 
@@ -11,20 +13,42 @@ import java.util.Date;
 import rumstajn.parfem.parfem.model.Perfume;
 import rumstajn.parfem.parfem.model.PerfumeGenderType;
 import rumstajn.parfem.parfem.model.dao.PerfumeDatabaseProvider;
+import rumstajn.parfem.parfem.viewmodel.PerfumeViewModel;
 
 public class MainActivity extends AppCompatActivity {
+    private PerfumeViewModel viewModel;
+    private Fragment listFragment;
+    private Fragment detailsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Perfume perfume = new Perfume("debug", "shanel", PerfumeGenderType.MALE, new Date(), "");
-        PerfumeDatabaseProvider.getDatabaseInstance(getApplicationContext()).getPerfumeDAO().addNewPerfume(perfume);
+        viewModel = new ViewModelProvider(this).get(PerfumeViewModel.class);
 
+        listFragment = new ListFragment(this);
+        detailsFragment = new DetailFragment(this);
+
+        showListFragment();
+    }
+
+    public void showListFragment(){
+        showFragment(listFragment);
+    }
+
+    public void showDetailsFragment(){
+        showFragment(detailsFragment);
+    }
+
+    public void showFragment(Fragment fragment){
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, new ListFragment())
+                .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    public PerfumeViewModel getViewModel() {
+        return viewModel;
     }
 }

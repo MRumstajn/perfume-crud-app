@@ -1,9 +1,13 @@
 package rumstajn.parfem.parfem.view;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -11,8 +15,33 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.mauricio.parfem.R;
 import com.mauricio.parfem.databinding.FragmentSecondBinding;
+import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rumstajn.parfem.parfem.model.Perfume;
+import rumstajn.parfem.parfem.viewmodel.PerfumeViewModel;
+
+@SuppressLint("NonConstantResourceId")
 public class DetailFragment extends Fragment {
+    private MainActivity mainActivity;
+    private PerfumeViewModel viewModel;
+
+    @BindView(R.id.details_name_field) TextView name;
+    @BindView(R.id.details_manufacturer_field) TextView manufacturer;
+    @BindView(R.id.details_gender_field) TextView gender;
+    @BindView(R.id.details_date_field) TextView date;
+    @BindView(R.id.details_back_btn) Button backBtn;
+    @BindView(R.id.details_image) ImageView image;
+
+    public DetailFragment(MainActivity mainActivity){
+        this.mainActivity = mainActivity;
+
+        viewModel = mainActivity.getViewModel();
+    }
 
     @Override
     public View onCreateView(
@@ -21,6 +50,24 @@ public class DetailFragment extends Fragment {
     ) {
         View view = inflater.inflate(R.layout.fragment_second, container, false);
 
+        ButterKnife.bind(this, view);
+
+        Perfume selectedPerfume = viewModel.getSelectedPerfume();
+
+        name.setText(selectedPerfume.getName());
+        manufacturer.setText(selectedPerfume.getManufacturer());
+        gender.setText(selectedPerfume.getGender().toString());
+        date.setText(SimpleDateFormat.getDateInstance().format(selectedPerfume.getProductionDate()));
+
+        if (selectedPerfume.getImagePath() != null && selectedPerfume.getImagePath().length() > 0) {
+            Picasso.get().load(selectedPerfume.getImagePath()).into(image);
+        }
+
         return view;
+    }
+
+    @OnClick(R.id.details_back_btn)
+    public void onClickBackButton(){
+        mainActivity.showListFragment();
     }
 }

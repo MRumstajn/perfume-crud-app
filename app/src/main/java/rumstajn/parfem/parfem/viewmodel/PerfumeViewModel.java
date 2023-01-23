@@ -13,7 +13,9 @@ import rumstajn.parfem.parfem.model.dao.PerfumeDAO;
 import rumstajn.parfem.parfem.model.dao.PerfumeDatabaseProvider;
 
 public class PerfumeViewModel extends AndroidViewModel {
-    private PerfumeDAO perfumeDAO;
+    private final PerfumeDAO perfumeDAO;
+
+    private Perfume selectedPerfume;
 
     public PerfumeViewModel(@NonNull Application application) {
         super(application);
@@ -34,5 +36,13 @@ public class PerfumeViewModel extends AndroidViewModel {
 
     public void deletePerfume(Perfume perfume){
         perfumeDAO.deletePerfume(perfume);
+    }
+
+    public void setSelectedPerfume(Perfume selectedPerfume) {
+        this.selectedPerfume = selectedPerfume;
+    }
+
+    public Perfume getSelectedPerfume() {
+        return selectedPerfume;
     }
 }

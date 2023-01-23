@@ -21,4 +21,5 @@
     <string name="back_button">back button</string>
     <string name="back">Back</string>
     <string name="perfume_bitmap">perfume_bitmap</string>
+    <string name="no_perfumes_in_db">No perfumes in the database</string>
 </resources>
