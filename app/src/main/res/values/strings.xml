@@ -12,14 +12,21 @@
     <string name="add_new_entry">Add new entry</string>
     <string name="perfume_image">perfume image</string>
     <string name="name_label">Name:</string>
-    <string name="text_placeholder">placeholder...</string>
+    <string name="text_placeholder">placeholder…</string>
     <string name="manufacturer_label">Manufacturer:</string>
     <string name="date_label">Production date:</string>
     <string name="gender_label">For gender:</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="back_arrow">◀</string>
     <string name="back_button">back button</string>
     <string name="back">Back</string>
     <string name="perfume_bitmap">perfume_bitmap</string>
     <string name="no_perfumes_in_db">No perfumes in the database</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="perfume_name">Perfume name</string>
+    <string name="manufacturer">Manufacturer</string>
+    <string name="production_date">Production date</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="pick_a_date">📅 Pick a date</string>
 </resources>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:padding="30sp"
+    android:paddingLeft="3dip"
+    android:paddingRight="3dip"
+    android:shrinkColumns="1"
+    android:stretchColumns="*"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent">
+
+    <TableRow android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/new_perfume_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/perfume_image"
+            android:src="@drawable/ic_launcher_foreground" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50sp"
+            android:text="@string/name_label"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/new_perfume_name_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="no"
+            android:hint="@string/perfume_name"
+            android:inputType="text"
+            tools:ignore="LabelFor" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/manufacturer_label"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/new_perfume_manufacturer_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autofillHints="no"
+            android:hint="@string/manufacturer"
+            android:inputType="text" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gender_label"
+            android:textStyle="bold" />
+
+        <Spinner android:id="@+id/new_perfume_gender_spinner" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/date_label"
+            android:textStyle="bold" />
+
+        <Button
+            android:text="@string/pick_a_date"
+            android:id="@+id/new_perfume_date_button"/>
+    </TableRow>
+
+    <TableRow android:layout_marginTop="30sp">
+
+        <Button
+            android:id="@+id/new_perfume_create_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/create" />
+    </TableRow>
+
+    <TableRow android:layout_marginTop="10sp">
+
+        <Button
+            android:id="@+id/new_perfume_cancel_button"
+            android:layout_weight="1"
+            android:text="@string/cancel" />
+    </TableRow>
+
+</TableLayout>

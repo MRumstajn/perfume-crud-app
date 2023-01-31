@@ -14,6 +14,7 @@ import com.mauricio.parfem.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemClick;
 import rumstajn.parfem.parfem.model.Perfume;
 import rumstajn.parfem.parfem.view.list_adapter.ListAdapter;
@@ -27,6 +28,7 @@ public class ListFragment extends Fragment {
     private PerfumeViewModel viewModel;
 
     @BindView(R.id.no_perfumes_label) TextView noPerfumesLabel;
+    @BindView(R.id.loading_perfumes_label) TextView loadingPerfumesLabel;
     @BindView(R.id.list) ListView list;
 
     public ListFragment(MainActivity mainActivity){
@@ -67,6 +69,7 @@ public class ListFragment extends Fragment {
             } else {
                 noPerfumesLabel.setVisibility(View.VISIBLE);
             }
+            loadingPerfumesLabel.setVisibility(View.INVISIBLE);
         });
     }
 
@@ -77,5 +80,10 @@ public class ListFragment extends Fragment {
         viewModel.setSelectedPerfume(selectedPerfume);
 
         mainActivity.showDetailsFragment();
+    }
+
+    @OnClick(R.id.fab)
+    public void onClickCreatePerfumeFab(){
+        mainActivity.showNewPerfumeFragment();
     }
 }

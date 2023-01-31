@@ -1,21 +1,19 @@
 package rumstajn.parfem.parfem.view;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 
+import com.bumptech.glide.Glide;
 import com.mauricio.parfem.R;
-import com.mauricio.parfem.databinding.FragmentSecondBinding;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 
@@ -27,17 +25,21 @@ import rumstajn.parfem.parfem.viewmodel.PerfumeViewModel;
 
 @SuppressLint("NonConstantResourceId")
 public class DetailFragment extends Fragment {
-    private MainActivity mainActivity;
-    private PerfumeViewModel viewModel;
+    private final MainActivity mainActivity;
+    private final PerfumeViewModel viewModel;
 
-    @BindView(R.id.details_name_field) TextView name;
-    @BindView(R.id.details_manufacturer_field) TextView manufacturer;
-    @BindView(R.id.details_gender_field) TextView gender;
-    @BindView(R.id.details_date_field) TextView date;
-    @BindView(R.id.details_back_btn) Button backBtn;
-    @BindView(R.id.details_image) ImageView image;
+    @BindView(R.id.details_name_field)
+    TextView name;
+    @BindView(R.id.details_manufacturer_field)
+    TextView manufacturer;
+    @BindView(R.id.details_gender_field)
+    TextView gender;
+    @BindView(R.id.details_date_field)
+    TextView date;
+    @BindView(R.id.details_image)
+    ImageView image;
 
-    public DetailFragment(MainActivity mainActivity){
+    public DetailFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
 
         viewModel = mainActivity.getViewModel();
@@ -59,15 +61,15 @@ public class DetailFragment extends Fragment {
         gender.setText(selectedPerfume.getGender().toString());
         date.setText(SimpleDateFormat.getDateInstance().format(selectedPerfume.getProductionDate()));
 
-        if (selectedPerfume.getImagePath() != null && selectedPerfume.getImagePath().length() > 0) {
-            Picasso.get().load(selectedPerfume.getImagePath()).into(image);
+        if (selectedPerfume.getImagePath() != null && !selectedPerfume.getImagePath().isEmpty()) {
+            Glide.with(requireContext()).load(selectedPerfume.getImagePath()).into(image);
         }
 
         return view;
     }
 
     @OnClick(R.id.details_back_btn)
-    public void onClickBackButton(){
+    public void onClickBackButton() {
         mainActivity.showListFragment();
     }
 }

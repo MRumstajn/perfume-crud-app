@@ -11,7 +11,8 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/perfume_bitmap"
         android:id="@+id/perfume_card_bitmap"
-        android:src="@drawable/ic_launcher_foreground"/>
+        android:src="@drawable/ic_launcher_foreground"
+        android:adjustViewBounds="true"/>
 
     <TextView
         android:layout_width="match_parent"

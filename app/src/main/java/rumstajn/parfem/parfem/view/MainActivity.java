@@ -1,6 +1,7 @@
 package rumstajn.parfem.parfem.view;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private PerfumeViewModel viewModel;
     private Fragment listFragment;
     private Fragment detailsFragment;
+    private Fragment newPerfumeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +31,24 @@ public class MainActivity extends AppCompatActivity {
 
         listFragment = new ListFragment(this);
         detailsFragment = new DetailFragment(this);
+        newPerfumeFragment = new NewPerfumeFragment(this);
 
         showListFragment();
     }
 
-    public void showListFragment(){
+    public void showListFragment() {
         showFragment(listFragment);
     }
 
-    public void showDetailsFragment(){
+    public void showDetailsFragment() {
         showFragment(detailsFragment);
     }
 
-    public void showFragment(Fragment fragment){
+    public void showNewPerfumeFragment() {
+        showFragment(newPerfumeFragment);
+    }
+
+    public void showFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
@@ -50,5 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
     public PerfumeViewModel getViewModel() {
         return viewModel;
+    }
+
+    public void showToast(String msg) {
+        runOnUiThread(() -> Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show());
     }
 }

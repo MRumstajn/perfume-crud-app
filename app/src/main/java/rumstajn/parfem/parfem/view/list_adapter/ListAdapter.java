@@ -7,8 +7,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mauricio.parfem.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class ListAdapter extends BaseAdapter {
     public ListAdapter() {
         perfumes = new ArrayList<>();
     }
+
 
     @Override
     public int getCount() {
@@ -47,10 +49,11 @@ public class ListAdapter extends BaseAdapter {
         Perfume perfume = perfumes.get(position);
 
         ((TextView) convertView.findViewById(R.id.perfume_card_name)).setText(perfume.getName());
-        ImageView bitmap = ((ImageView) convertView.findViewById(R.id.perfume_card_bitmap));
+        ImageView imageView = convertView.findViewById(R.id.perfume_card_bitmap);
 
         if (perfume.getImagePath() != null && perfume.getImagePath().length() > 0) {
-            Picasso.get().load(perfume.getImagePath()).into(bitmap);
+            Glide.with(convertView.getContext()).asBitmap().load(perfume.getImagePath())
+                    .apply(new RequestOptions().override(300, 300)).into(imageView);
         }
 
         return convertView;
@@ -62,11 +65,5 @@ public class ListAdapter extends BaseAdapter {
 
     public List<Perfume> getPerfumes() {
         return perfumes;
-    }
-
-    public void addPerfume(Perfume perfume){
-        if (!perfumes.contains(perfume)) {
-            perfumes.add(perfume);
-        }
     }
 }
