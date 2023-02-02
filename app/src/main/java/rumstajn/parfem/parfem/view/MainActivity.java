@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment listFragment;
     private Fragment detailsFragment;
     private Fragment newPerfumeFragment;
+    private Fragment editFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         listFragment = new ListFragment(this);
         detailsFragment = new DetailFragment(this);
         newPerfumeFragment = new NewPerfumeFragment(this);
+        editFragment = new EditFragment(this);
 
         showListFragment();
     }
@@ -46,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void showNewPerfumeFragment() {
         showFragment(newPerfumeFragment);
+    }
+
+    public void showEditFragment(){
+        showFragment(editFragment);
     }
 
     public void showFragment(Fragment fragment) {

@@ -72,4 +72,9 @@ public class DetailFragment extends Fragment {
     public void onClickBackButton() {
         mainActivity.showListFragment();
     }
+
+    @OnClick(R.id.details_edit_button)
+    public void onClickEditButton(){
+        mainActivity.showEditFragment();
+    }
 }

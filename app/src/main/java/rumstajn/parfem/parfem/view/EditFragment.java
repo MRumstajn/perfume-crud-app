@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,6 @@ import com.mauricio.parfem.R;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -38,39 +38,56 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rumstajn.parfem.parfem.model.Perfume;
 import rumstajn.parfem.parfem.model.PerfumeGenderType;
+import rumstajn.parfem.parfem.viewmodel.PerfumeViewModel;
 
 @SuppressLint("NonConstantResourceId")
-public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
+public class EditFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
     private final MainActivity mainActivity;
+    private Date productionDate;
+    private PerfumeViewModel viewModel;
+    private String imagePath;
+    private ActivityResultLauncher<Object> launcher;
+    private ArrayAdapter<PerfumeGenderType> arrayAdapter;
+    private Perfume selectedPerfume;
 
-    @BindView(R.id.new_perfume_name_field)
+    @BindView(R.id.edit_perfume_name_field)
     EditText nameField;
-    @BindView(R.id.new_perfume_manufacturer_field)
+    @BindView(R.id.edit_perfume_manufacturer_field)
     EditText manufacturerField;
-    @BindView(R.id.new_perfume_gender_spinner)
+    @BindView(R.id.edit_perfume_gender_spinner)
     Spinner genderSpinner;
-    @BindView(R.id.new_perfume_image)
+    @BindView(R.id.edit_perfume_image)
     ImageView image;
 
-    private Date productionDate;
-    private ActivityResultLauncher<Object> launcher;
-    private String imagePath;
-
-    public NewPerfumeFragment(MainActivity mainActivity) {
+    public EditFragment(MainActivity mainActivity) {
         this.mainActivity = mainActivity;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        nameField.setText(selectedPerfume.getName());
+        manufacturerField.setText(selectedPerfume.getManufacturer());
+        genderSpinner.setSelection(arrayAdapter.getPosition(selectedPerfume.getGender()));
+        productionDate = selectedPerfume.getProductionDate();
+        imagePath = selectedPerfume.getImagePath();
+
+        if (imagePath != null && imagePath.length() > 0) {
+            Glide.with(requireContext()).load(imagePath).into(image);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_new_perfume, container, false);
+        View view = inflater.inflate(R.layout.fragment_edit, container, false);
 
         ButterKnife.bind(this, view);
 
-        ArrayAdapter<PerfumeGenderType> arrayAdapter =
-                new ArrayAdapter<>(getContext(),
-                        androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        arrayAdapter = new ArrayAdapter<>(getContext(),
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
 
         arrayAdapter.add(PerfumeGenderType.MALE);
         arrayAdapter.add(PerfumeGenderType.FEMALE);
@@ -78,12 +95,8 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
 
         genderSpinner.setAdapter(arrayAdapter);
 
-        return view;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        viewModel = mainActivity.getViewModel();
+        selectedPerfume = viewModel.getSelectedPerfume();
 
         launcher = registerForActivityResult(new ActivityResultContract<Object, Object>() {
             @Override
@@ -102,8 +115,11 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
                 if (tempFile != null) {
                     imagePath = tempFile.getPath();
+                    selectedPerfume.setImagePath(imagePath);
+
                     Uri tempFileUri = FileProvider.getUriForFile(mainActivity,
                             "rumstajn.parfem.fileprovider", tempFile);
 
@@ -117,56 +133,37 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
 
             ImageFileUtils.addImageToGallery(imagePath, mainActivity);
         });
+
+        return view;
     }
 
-    @OnClick(R.id.new_perfume_date_button)
+    @OnClick(R.id.edit_perfume_date_button)
     public void onDateButtonClicked() {
         new DatePickerDialog(requireContext(), this, 2023, 1, 1).show();
     }
 
-    @OnClick(R.id.new_perfume_create_button)
-    public void onCreateButtonClicked() {
-        String name = nameField.getText().toString();
-        String manufacturer = manufacturerField.getText().toString();
+    @OnClick(R.id.edit_perfume_save_button)
+    public void onSaveButtonClicked() {
+        Perfume selectedPerfume = viewModel.getSelectedPerfume();
+        selectedPerfume.setName(nameField.getText().toString());
+        selectedPerfume.setManufacturer(manufacturerField.getText().toString());
+        selectedPerfume.setProductionDate(productionDate);
+        selectedPerfume.setGender((PerfumeGenderType) genderSpinner.getSelectedItem());
+        selectedPerfume.setImagePath(imagePath);
 
-        if (checkStringsEmpty(name, manufacturer)) {
-            mainActivity.showToast("All fields are required");
-            return;
-        }
+        viewModel.editPerfume(selectedPerfume);
 
-        if (productionDate == null) {
-            mainActivity.showToast("Select a date");
-            return;
-        }
-
-        Object selectedSpinnerObj = genderSpinner.getSelectedItem();
-        if (selectedSpinnerObj == null) {
-            mainActivity.showToast("Select a gender first");
-            return;
-        }
-
-        PerfumeGenderType genderType = (PerfumeGenderType) selectedSpinnerObj;
-
-        mainActivity.getViewModel().addNewPerfume(new Perfume(name, manufacturer, genderType,
-                productionDate, imagePath));
-
-        ImageFileUtils.addImageToGallery(imagePath, mainActivity);
-
-        mainActivity.showListFragment();
+        mainActivity.showDetailsFragment();
     }
 
-    @OnClick(R.id.new_perfume_cancel_button)
-    public void onCancelButtonClicked() {
-        mainActivity.showListFragment();
+    @OnClick(R.id.edit_perfume_cancel_button)
+    public void onCancelButtonClicked(){
+        mainActivity.showDetailsFragment();
     }
 
-    @OnClick(R.id.new_perfume_image)
+    @OnClick(R.id.edit_perfume_image)
     public void onClickOnImage() {
         launcher.launch(null);
-    }
-
-    private boolean checkStringsEmpty(String... args) {
-        return Arrays.stream(args).anyMatch(String::isEmpty);
     }
 
     @Override
