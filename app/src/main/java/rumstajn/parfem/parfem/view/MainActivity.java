@@ -9,11 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mauricio.parfem.R;
 
-import java.util.Date;
-
-import rumstajn.parfem.parfem.model.Perfume;
-import rumstajn.parfem.parfem.model.PerfumeGenderType;
-import rumstajn.parfem.parfem.model.dao.PerfumeDatabaseProvider;
 import rumstajn.parfem.parfem.viewmodel.PerfumeViewModel;
 
 public class MainActivity extends AppCompatActivity {

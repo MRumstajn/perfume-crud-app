@@ -15,12 +15,28 @@
 
     <TableRow android:gravity="center_horizontal">
 
-        <ImageView
-            android:id="@+id/new_perfume_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/perfume_image"
-            android:src="@drawable/ic_launcher_foreground" />
+        <FrameLayout tools:ignore="UselessParent">
+            <ImageView
+                android:id="@+id/new_perfume_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/perfume_image"
+                android:src="@drawable/ic_launcher_background"
+                android:layout_gravity="center"
+                android:tintMode="screen"
+                app:tint="@color/light_gray" />
+
+            <ImageView
+                android:id="@+id/new_perfume_image_overlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/edit_icon"
+                android:src="@android:drawable/ic_menu_edit"
+                android:tintMode="multiply"
+                app:tint="@color/light_gray" />
+
+        </FrameLayout>
     </TableRow>
 
     <TableRow>

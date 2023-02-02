@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mauricio.parfem.R;
 
 import java.io.File;
@@ -46,6 +47,7 @@ public class EditFragment extends Fragment implements DatePickerDialog.OnDateSet
     private Date productionDate;
     private PerfumeViewModel viewModel;
     private String imagePath;
+    private String originalImagePath;
     private ActivityResultLauncher<Object> launcher;
     private ArrayAdapter<PerfumeGenderType> arrayAdapter;
     private Perfume selectedPerfume;
@@ -74,7 +76,7 @@ public class EditFragment extends Fragment implements DatePickerDialog.OnDateSet
         imagePath = selectedPerfume.getImagePath();
 
         if (imagePath != null && imagePath.length() > 0) {
-            Glide.with(requireContext()).load(imagePath).into(image);
+            Glide.with(requireContext()).load(imagePath).apply(new RequestOptions().override(300, 300)).into(image);
         }
     }
 
@@ -117,6 +119,7 @@ public class EditFragment extends Fragment implements DatePickerDialog.OnDateSet
                 }
 
                 if (tempFile != null) {
+                    originalImagePath = selectedPerfume.getImagePath();
                     imagePath = tempFile.getPath();
                     selectedPerfume.setImagePath(imagePath);
 
@@ -129,7 +132,7 @@ public class EditFragment extends Fragment implements DatePickerDialog.OnDateSet
                 return cameraIntent;
             }
         }, ignored -> {
-            Glide.with(requireContext()).load(imagePath).into(image);
+            Glide.with(requireContext()).load(imagePath).apply(new RequestOptions().override(300, 800)).into(image);
 
             ImageFileUtils.addImageToGallery(imagePath, mainActivity);
         });
@@ -157,11 +160,12 @@ public class EditFragment extends Fragment implements DatePickerDialog.OnDateSet
     }
 
     @OnClick(R.id.edit_perfume_cancel_button)
-    public void onCancelButtonClicked(){
+    public void onCancelButtonClicked() {
+        selectedPerfume.setImagePath(originalImagePath);
         mainActivity.showDetailsFragment();
     }
 
-    @OnClick(R.id.edit_perfume_image)
+    @OnClick({R.id.edit_perfume_image, R.id.edit_perfume_image_overlay})
     public void onClickOnImage() {
         launcher.launch(null);
     }

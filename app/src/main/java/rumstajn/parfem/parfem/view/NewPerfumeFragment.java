@@ -160,7 +160,7 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
         mainActivity.showListFragment();
     }
 
-    @OnClick(R.id.new_perfume_image)
+    @OnClick({R.id.new_perfume_image, R.id.new_perfume_image_overlay})
     public void onClickOnImage() {
         launcher.launch(null);
     }
