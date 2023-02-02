@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.mauricio.parfem.R;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
@@ -76,5 +78,22 @@ public class DetailFragment extends Fragment {
     @OnClick(R.id.details_edit_button)
     public void onClickEditButton(){
         mainActivity.showEditFragment();
+    }
+
+    @OnClick(R.id.details_delete_button)
+    public void onDetailsButtonClicked(){
+        Perfume selectedPerfume = viewModel.getSelectedPerfume();
+
+        // delete perfume image
+        boolean deleted = new File(selectedPerfume.getImagePath()).delete();
+
+        if (!deleted){
+            mainActivity.showToast("Failed to delete image for perfume " + selectedPerfume.getName());
+        }
+
+        viewModel.deletePerfume(selectedPerfume);
+        viewModel.setSelectedPerfume(null);
+
+        mainActivity.showListFragment();
     }
 }
