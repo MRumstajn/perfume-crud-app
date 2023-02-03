@@ -1,38 +1,54 @@
 package rumstajn.parfem.parfem.view;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mauricio.parfem.R;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -42,6 +58,8 @@ import rumstajn.parfem.parfem.model.PerfumeGenderType;
 @SuppressLint("NonConstantResourceId")
 public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnDateSetListener {
     private final MainActivity mainActivity;
+    @SuppressLint("SimpleDateFormat")
+    private final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 
     @BindView(R.id.new_perfume_name_field)
     EditText nameField;
@@ -51,9 +69,13 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
     Spinner genderSpinner;
     @BindView(R.id.new_perfume_image)
     ImageView image;
+    @BindView(R.id.new_perfume_date_button)
+    Button dateButton;
+    @BindString(R.string.calendar_emoji)
+    String calendarEmoji;
 
     private Date productionDate;
-    private ActivityResultLauncher<Object> launcher;
+    private ActivityResultLauncher<Uri> launcher;
     private String imagePath;
 
     public NewPerfumeFragment(MainActivity mainActivity) {
@@ -85,43 +107,29 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        launcher = registerForActivityResult(new ActivityResultContract<Object, Object>() {
-            @Override
-            public Object parseResult(int i, @Nullable Intent intent) {
-                return intent != null ? intent.getExtras().get("data") : null;
-            }
-
-            @NonNull
-            @Override
-            public Intent createIntent(@NonNull Context context, Object o) {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                File tempFile = null;
-                try {
-                    tempFile = ImageFileUtils.createTempFile(mainActivity);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (tempFile != null) {
-                    imagePath = tempFile.getPath();
-                    Uri tempFileUri = FileProvider.getUriForFile(mainActivity,
-                            "rumstajn.parfem.fileprovider", tempFile);
-
-                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
-                }
-
-                return cameraIntent;
-            }
-        }, ignored -> {
-            Glide.with(requireContext()).load(imagePath).into(image);
-
-            ImageFileUtils.addImageToGallery(imagePath, mainActivity);
-        });
+        launcher = registerForActivityResult(
+                new ActivityResultContracts.TakePicture(),
+                result -> {
+                    if (result) {
+                        if (imagePath != null && imagePath.length() > 0) {
+                            // check if image file is valid (not empty)
+                            if (ImageFileUtils.isNonEmptyImageFile(imagePath)) {
+                                Glide.with(requireContext()).load(imagePath).apply(new RequestOptions().override(300, 300)).into(image);
+                                ImageFileUtils.addImageToGallery(imagePath, mainActivity);
+                            }
+                        }
+                    } else {
+                        imagePath = null;
+                    }
+                });
     }
 
     @OnClick(R.id.new_perfume_date_button)
     public void onDateButtonClicked() {
-        new DatePickerDialog(requireContext(), this, 2023, 1, 1).show();
+        LocalDate date = LocalDate.now();
+
+        new DatePickerDialog(requireContext(), this, date.getYear(),
+                date.getMonthValue(), date.getDayOfMonth()).show();
     }
 
     @OnClick(R.id.new_perfume_create_button)
@@ -147,22 +155,44 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
 
         PerfumeGenderType genderType = (PerfumeGenderType) selectedSpinnerObj;
 
+        if (imagePath == null || imagePath.length() == 0 || !ImageFileUtils.isNonEmptyImageFile(imagePath)){
+            mainActivity.showToast("Image is required");
+            return;
+        }
+
         mainActivity.getViewModel().addNewPerfume(new Perfume(name, manufacturer, genderType,
                 productionDate, imagePath));
 
         ImageFileUtils.addImageToGallery(imagePath, mainActivity);
+
+        resetFields();
 
         mainActivity.showListFragment();
     }
 
     @OnClick(R.id.new_perfume_cancel_button)
     public void onCancelButtonClicked() {
+        resetFields();
+
         mainActivity.showListFragment();
     }
 
     @OnClick({R.id.new_perfume_image, R.id.new_perfume_image_overlay})
     public void onClickOnImage() {
-        launcher.launch(null);
+        File tempFile = null;
+        try {
+            tempFile = ImageFileUtils.createTempFile(mainActivity);
+        } catch (IOException e) {
+            mainActivity.showToast("Could not create image file");
+            e.printStackTrace();
+        }
+        if (tempFile != null) {
+            imagePath = tempFile.getPath();
+            Uri tempFileUri = FileProvider.getUriForFile(mainActivity,
+                    "rumstajn.parfem.fileprovider", tempFile);
+
+            launcher.launch(tempFileUri);
+        }
     }
 
     private boolean checkStringsEmpty(String... args) {
@@ -177,5 +207,16 @@ public class NewPerfumeFragment extends Fragment implements DatePickerDialog.OnD
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         productionDate = calendar.getTime();
+
+        String buttonLabel = calendarEmoji + dateFormat.format(productionDate);
+        dateButton.setText(buttonLabel);
+    }
+
+    private void resetFields(){
+        nameField.setText(null);
+        manufacturerField.setText(null);
+        genderSpinner.setSelection(0);
+        productionDate = null;
+        imagePath = null;
     }
 }

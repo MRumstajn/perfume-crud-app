@@ -22,8 +22,10 @@
         <activity
             android:name="rumstajn.parfem.parfem.view.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Parfem.NoActionBar">
+            android:theme="@style/Theme.Parfem.NoActionBar"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

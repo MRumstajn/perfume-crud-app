@@ -17,6 +17,7 @@ import com.mauricio.parfem.R;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import butterknife.BindView;
@@ -47,6 +48,7 @@ public class DetailFragment extends Fragment {
         viewModel = mainActivity.getViewModel();
     }
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -61,7 +63,7 @@ public class DetailFragment extends Fragment {
         name.setText(selectedPerfume.getName());
         manufacturer.setText(selectedPerfume.getManufacturer());
         gender.setText(selectedPerfume.getGender().toString());
-        date.setText(SimpleDateFormat.getDateInstance().format(selectedPerfume.getProductionDate()));
+        date.setText(new SimpleDateFormat("dd.MM.yyyy").format(selectedPerfume.getProductionDate()));
 
         if (selectedPerfume.getImagePath() != null && !selectedPerfume.getImagePath().isEmpty()) {
             Glide.with(requireContext()).load(selectedPerfume.getImagePath()).into(image);

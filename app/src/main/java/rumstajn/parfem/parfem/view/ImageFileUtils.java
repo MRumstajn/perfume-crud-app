@@ -1,9 +1,13 @@
 package rumstajn.parfem.parfem.view;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+
+import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,10 +24,23 @@ public class ImageFileUtils {
     }
 
     public static void addImageToGallery(String imagePath, MainActivity mainActivity) {
+        if (imagePath == null){
+            return;
+        }
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File file = new File(imagePath);
-        Uri contentUri = Uri.fromFile(file);
-        mediaScanIntent.setData(contentUri);
-        mainActivity.sendBroadcast(mediaScanIntent);
+        if (file.exists()){
+            Uri contentUri = Uri.fromFile(file);
+            mediaScanIntent.setData(contentUri);
+            mainActivity.sendBroadcast(mediaScanIntent);
+        }
+    }
+
+    public static boolean isNonEmptyImageFile(String path){
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        return options.outWidth != -1 && options.outHeight != -1;
     }
 }

@@ -28,9 +28,11 @@
     <string name="production_date">Production date</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="calendar_emoji">📅</string>
     <string name="pick_a_date">📅 Pick a date</string>
     <string name="edit">🖌 Edit</string>
     <string name="delete">🗑 Delete</string>
     <string name="save">Save</string>
     <string name="edit_icon">edit icon</string>
+    <string name="edit_image">Edit image</string>
 </resources>
